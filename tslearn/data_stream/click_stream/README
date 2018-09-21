@@ -1,0 +1,5 @@
+A clickstream is a simple data stream of fields which are generated on each click, os just imminent information is conveened.
+For correct attribution of each set of fields to an incrementally build state three identifier fields are most convenient: `UserKey`, `SessionKey`, and an absolute `Time`.
+Alternatively the SessionKey can be equally represented by a `NewSession`-Flag.
+The `Time`-field is needed to establish time order. Eventually the `Time`-field will be converted into an incremental identifier, which will fulfill the same purpose,
+but allows easy tracking across objects.
