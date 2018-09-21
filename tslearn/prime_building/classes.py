@@ -6,7 +6,7 @@ Created on Oct 2, 2017
 Definitions for PrimeBuilders
 '''
 
-from realtimemachine.classes import Prime, State
+from ..classes import Prime, State
 import pandas as pd
 
 class PrimeBuilder():

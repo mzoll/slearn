@@ -6,12 +6,12 @@ Created on Sep 25, 2017
 Sequentally construct the State from sequential raw input
 '''
 
-from realtimemachine.classes import Request, State
-from tslearn import StateBuilder, OnceMixin, SessionMixin, EveryMixin
+from tslearn.classes import Incident, State
+from tslearn.state_building.classes import StateBuilder, OnceMixin, SessionMixin, EveryMixin
 
 import datetime as dt
 
-from tslearn import SessionTrigger
+from tslearn.state_building.session import SessionTrigger
 
 class StateConstructor():
     """ Constructs the State by altering the stale State into a new updated State by application of StateBuilders.

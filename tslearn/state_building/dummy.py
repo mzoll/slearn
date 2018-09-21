@@ -6,10 +6,10 @@ Created on Mar 1, 2018
 Fake the behaviour of a StateBuilder
 '''
 
-from realtimemachine.state_building.classes import StateBuilder, EveryMixin
 import datetime as dt
+from ..state_building.classes import StateBuilder, EveryMixin
 
-from common_tools.helpers.value_retrieval import RetrieveValue
+from tslearn.externals.common_tools.helpers.value_retrieval import RetrieveValue
 
 class DummyStateBuilder(StateBuilder, EveryMixin):
     """ 

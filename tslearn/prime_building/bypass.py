@@ -4,9 +4,9 @@ Created on Aug 2, 2018
 @author: marcel.zoll
 '''
 
-from realtimemachine.classes import Prime, State
-from realtimemachine.prime_building.classes import PrimeBuilder
-from realtimemachine.state_building.bypass import BypassStateBuilder
+from tslearn.classes import Prime, State
+from tslearn.prime_building.classes import PrimeBuilder
+from tslearn.state_building.bypass import BypassStateBuilder
 
 class BypassPrimeBuilder(PrimeBuilder):
     """ Bypass the PrimeBuilding process in combination with the BypassStateBuilder.

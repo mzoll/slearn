@@ -4,7 +4,7 @@ Created on Mar 23, 2018
 @author: marcel.zoll
 '''
 
-from realtimemachine.prime_building.classes import PrimeBuilder
+from ..prime_building.classes import PrimeBuilder
 from sklearn.base import TransformerMixin
 
 class PrimeBuilderTransPort(TransformerMixin, object):

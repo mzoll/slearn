@@ -5,7 +5,7 @@ Created on Feb 6, 2018
 '''
 
 import pandas as pd
-from realtimemachine.classes import Incident
+from tslearn.classes import Incident
 
 
 def dsp_to_incidents(dsp, userkey_name, sessionkey_name, timestamp_name):

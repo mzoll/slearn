@@ -2,7 +2,6 @@
 The hierarchical structure while processing is :
 Request -> Incident -> State -> Prime -> Result -> Response
 
-Notice that Request and Response are objects that are communicated from or to the outside of RealTimeMachine
 A Incident holds information that is only current for one specific step in time
 A State is a sequentially build by itself stateless object, that encodes the current and all previously received Requests
 A Prime is a partial aspect of a State with no or minimal convolution of information
@@ -31,9 +30,7 @@ best practices are
 
 """
 
-from tslearn import Request
-from tslearn import Incident
-from tslearn import State
-from tslearn import Prime
-from tslearn import Result
-from tslearn import Response
+from .incident import Incident
+from .state import State
+from .prime import Prime
+from .result import Result

@@ -6,9 +6,9 @@ Created on Sep 25, 2017
 
 import datetime as dt
 
-from realtimemachine.classes import State, Prime
-from tslearn import PrimeBuilder
-from tslearn import StateBuilderTransPort
+from ..classes import State, Prime
+from .classes import PrimeBuilder
+from .transport import StateBuilderTransPort
 
 import logging
 logger = logging.getLogger('PrimeConstructor')

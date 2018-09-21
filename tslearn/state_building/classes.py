@@ -6,7 +6,7 @@ Created on Oct 2, 2017
 Definitions for StateBuilders
 '''
 
-from realtimemachine.classes import State 
+from tslearn.classes import State 
 
 class StateBuilder():
     """ A Builder class specifying how a certain aspect of the _state_ is incrementally constructed from previous (stale) state and
