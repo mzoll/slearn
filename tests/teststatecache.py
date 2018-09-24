@@ -8,8 +8,8 @@ import unittest
 
 import datetime as dt
 
-from common_tools.localcache.managed import ManagedCache_Master
-from realtimemachine.classes import State
+from tslearn.externals.common_tools.localcache.managed import ManagedCache_Master
+from tslearn.classes import State
 
 class Test(unittest.TestCase):
     def testStateCache(self):
