@@ -23,7 +23,7 @@ class Result(object):
     ----------
     meta : dict
         meta-information on this object
-    results : dict
+    data : dict
         holds the result information 
     """
     def __init__(self, uid, targetid, timestamp, routingkey=None, meta={}):
@@ -32,5 +32,5 @@ class Result(object):
         self.timestamp = timestamp
         self.routingkey = routingkey
         self.meta = meta
-        self.results = {}
+        self.data = {}
     

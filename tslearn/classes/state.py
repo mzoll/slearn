@@ -7,8 +7,8 @@ Created on Oct 26, 2017
 import copy
 import json
 
-from common_tools.tools.dt_parse import datetime_from_isostring
-from common_tools.tools.json_enc import json_serializer
+from tslearn.externals.common_tools.tools.dt_parse import datetime_from_isostring
+from tslearn.externals.common_tools.tools.json_enc import json_serializer
 
 class State(object):
     """ define a state as a collection of data with mixed persitency
