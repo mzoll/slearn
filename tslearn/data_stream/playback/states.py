@@ -14,11 +14,11 @@ import logging
 logger = logging.getLogger('playback')
 
 from joblib import Parallel, delayed
-from common_tools.tools.groups import GenStrategicGroups
-from common_tools.parallelism import GetNCores
+from tslearn.externals.common_tools.tools.groups import GenStrategicGroups
+from tslearn.externals.common_tools.parallelism import GetNCores
 
-from realtimemachine.classes import State
-from realtimemachine.state_building.constructor import StateConstructor
+from tslearn.classes import State
+from tslearn.state_building.constructor import StateConstructor
 
 
 class _ConstructStateCaller:
@@ -48,7 +48,7 @@ class _ConstructStateCaller:
         self.stateBuilder_list = stateBuilder_list
         #-----------------------------------
         self.stateConstructor = StateConstructor(stateBuilder_list, sessionTrigger)
-        #---------- varibales for the rolling state ---
+        #---------- variables for the rolling state ---
         self.targetKey = ""
         self.staleState = State(None, "", None)
     def __call__(self, df):
@@ -72,7 +72,7 @@ class _ConstructStateCaller:
             
             out_df = out_df.append( pd.Series(newState.data.to_flatdict().copy(), name=idx) )
             
-            # the newly updated state becomes the stale state for the next iterationstep
+            # the newly updated state becomes the stale state for the next iteration step
             self.staleState = newState
         
         return out_df

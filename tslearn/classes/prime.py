@@ -4,7 +4,7 @@ Created on Oct 26, 2017
 @author: marcel.zoll
 '''
 
-from realtimemachine.classes.state import State
+from tslearn.classes.state import State
 
 class Prime(object):
     """ collection of preprocessed varibales, logically between the State and model-intern feature extraction  

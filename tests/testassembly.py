@@ -1,8 +1,9 @@
-'''
+"""
 Created on Feb 4, 2018
 
 @author: marcel.zoll
-'''
+"""
+
 import unittest
 
 import pandas as pd
@@ -22,7 +23,7 @@ class Test(unittest.TestCase):
 
         main_pipe = Pipeline([
             ('all', ColumnsAll()),
-            ('fu',FeatureUnion([
+            ('fu', FeatureUnion([
                 ('tb', TransformerPipe([
                     ('cs', ColumnsSelect('Vec')),
                     ('checkbox', SequenceVectorCheckboxes(['a','b','c'], default_name='d'))
@@ -38,7 +39,6 @@ class Test(unittest.TestCase):
         
         print("predict", main_pipe.predict_dict(d))
         
-
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testDictPredict']

@@ -11,7 +11,6 @@ import numpy as np
 import json
 
 import logging
-from click.core import Parameter
 logger = logging.getLogger('JSON_Encoder')
 
 class JSON_Encoder(json.JSONEncoder):
