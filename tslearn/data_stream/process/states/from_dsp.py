@@ -1,17 +1,17 @@
-'''
-Created on Sep 25, 2017
+"""
+Created on Jan 30, 2019
 
 @author: marcel.zoll
 
 Sequentially construct the State from sequential raw input
-'''
+"""
 
 import math
 import time
 import pandas as pd
 
 import logging
-logger = logging.getLogger('playback')
+logger = logging.getLogger('process')
 
 from joblib import Parallel, delayed
 from tslearn.externals.common_tools.tools.groups import GenStrategicGroups
@@ -78,7 +78,7 @@ class _ConstructStateCaller:
         return out_df
             
 
-def constructStates(dsp,
+def playback(dsp,
         incidentConstructor,
         sessionTrigger,
         stateBuilder_list,

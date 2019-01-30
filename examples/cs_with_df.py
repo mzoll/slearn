@@ -13,7 +13,7 @@ from tslearn.extras.click_stream.clickstream_gen.sub_gens.agent_gen import UserA
 from tslearn.data_stream.pack import DataStreamPack
 import pandas as pd
 
-from tslearn.data_stream.playback.states.from_dsp import playback
+from tslearn.data_stream.process.states.from_dsp import playback
 
 
 def testClickStreamSampleGen(self):
@@ -57,7 +57,7 @@ def testClickStreamSampleGen(self):
         meta = {"Fake": True}
     )
 
-    # --- prep for playback
+    # --- prep for process
 
     def incidentConstructor(uid, click):
         return Incident(
@@ -74,7 +74,7 @@ def testClickStreamSampleGen(self):
 
     stateBuilder_list = []
 
-    # --- execute the playback
+    # --- execute the process
 
     states_df = playback(dsp,
                          incidentConstructor,

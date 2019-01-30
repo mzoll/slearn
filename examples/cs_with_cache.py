@@ -10,7 +10,7 @@ from tslearn.extras.clickstream_gen.clickstream_gen import ClickGenerator
 from tslearn.extras.clickstream_gen.sub_gens.url_gen import URLGenerator
 from tslearn.extras.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
 
-from tslearn.data_stream.playback.states.from_incidents import IncidentProcessor
+from tslearn.data_stream.process.states.from_incident import IncidentProcessor
 
 
 def testClickStreamSampleGen(self):
