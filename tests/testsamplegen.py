@@ -10,6 +10,9 @@ from tslearn.data_stream.click_stream.sample_gen.sample_gen import ClickGenerato
 from tslearn.data_stream.click_stream.sample_gen.url_gen import URLGenerator
 from tslearn.data_stream.click_stream.sample_gen.agent_gen import UserAgentGenerator
 
+from tslearn.data_stream.pack import DataStreamPack
+
+
 
 class Test(unittest.TestCase):
     def testClickStreamSampleGen(self):
@@ -36,6 +39,42 @@ class Test(unittest.TestCase):
                 print(len(g._active_users))
 
         print(len(clicks))
+
+        # --- convert clicks to data frame
+        df = pandas.DataFrame()
+
+        for c in clicks:
+            df.append(pd.Series({"UserID": c.uid, "TimeStamp": c.ts}.update(c.data)))
+
+        dsp = DataStreamPack(
+            routingkey = 0,
+            data=df,
+            startTime=min(df['TimeStamp']),
+            endTime=max(df['TimeStamp']),
+            meta = {"Fake": True}
+        )
+
+        # --- convert clicks to incidents
+        from tslearn.data_stream.playback.states import constructStates
+
+        def incidentConstructor(uid, click):
+            return Incident(
+                    uid = uid,
+                    targetid = click.uid,
+                    timestamp = click.ts,
+                    meta={'origin': 'fakeClickGenerator'},
+                    data=click.data)
+
+        incidents = []
+        for uid, c in enumerate(clicks):
+            incidents.append(incidentConstructor(uid, c))
+
+        def sessionTrigger(*args, **kwargs):
+            return False
+
+        targetid_column = 'UserId'
+
+
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']

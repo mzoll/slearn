@@ -1,4 +1,8 @@
 
+from fake_useragent import UserAgent
+ua = UserAgent()
+
+
 class UserAgentGenerator(object):
     class UserAgentGen_child(object):
         """ Subclass to URLGenerator which can be spawned through URLGenerator.get_child() and reponds to step() and get_dict() """
@@ -6,7 +10,7 @@ class UserAgentGenerator(object):
             self.init_props()
         def init_props(self):
             """ generate the agent string once """
-            self.agent_string = "Mozilla"
+            self.agent_string = ua.random
         def step(self):
             pass
         def get_dict(self):

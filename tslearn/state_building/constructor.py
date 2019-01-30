@@ -1,10 +1,10 @@
-'''
+"""
 Created on Sep 25, 2017
 
 @author: marcel.zoll
 
-Sequentally construct the State from sequential raw input
-'''
+Sequentially construct the State from sequential raw input
+"""
 
 from tslearn.classes import Incident, State
 from tslearn.state_building.classes import StateBuilder, OnceMixin, SessionMixin, EveryMixin
@@ -12,6 +12,7 @@ from tslearn.state_building.classes import StateBuilder, OnceMixin, SessionMixin
 import datetime as dt
 
 from tslearn.state_building.session import SessionTrigger
+
 
 class StateConstructor():
     """ Constructs the State by altering the stale State into a new updated State by application of StateBuilders.
@@ -25,12 +26,13 @@ class StateConstructor():
     sessionTrigger : SessionTrigger inst
         specifies when a new Session starts; the default *never* starts a new session
     """
+
     def __init__(self,
-            stateBuilder_list,
-            sessionTrigger = SessionTrigger()):
+                 stateBuilder_list,
+                 sessionTrigger=SessionTrigger()):
         self.stateBuilder_list = stateBuilder_list
         self.sessionTrigger = sessionTrigger
-        #--- strip and categorize prelist functions---------
+        # --- strip and categorize prelist functions---------
         self.onceSB = []
         self.sessionSB = []
         self.everySB = []
@@ -41,8 +43,8 @@ class StateConstructor():
                 self.sessionSB.append(sb)
             else:
                 self.everySB.append(sb)
-        #---------- varibales for the rolling state ---
-    def __call__(self, incident, oldstate, reset = False, newSession = False):
+
+    def __call__(self, incident, oldstate, reset=False, newSession=False):
         """ Copy and update the _oldstate_ into a _new State_, by the information provided by the _request_  
         
         Parameters
@@ -64,16 +66,16 @@ class StateConstructor():
         if oldstate is None:
             reset = True
             newSession = True
-            oldstate = State(None, incident.targetid, None, incident.routingkey) 
+            oldstate = State(None, incident.targetid, None, incident.routingkey)
         else:
             newSession = newSession or self.sessionTrigger(incident, oldstate)
-        
-        #NOTE asserts disabled for speed            
-        #assert( oldstate.targetid == request.targetid)
-        #assert( oldstate.routingkey == request.routingkey)
-        
-        #cleanup State if special conditions apply 
-        if reset: 
+
+        # NOTE asserts disabled for speed
+        # assert( oldstate.targetid == request.targetid)
+        # assert( oldstate.routingkey == request.routingkey)
+
+        # cleanup State if special conditions apply
+        if reset:
             newstate = State(incident.uid, incident.targetid, dt.datetime.now(), incident.routingkey)
         elif newSession:
             newstate = oldstate.copy()
@@ -86,17 +88,16 @@ class StateConstructor():
             newstate.data.clear_now()
             newstate.uid = incident.uid
             newstate.timestamp = dt.datetime.now()
-        
-        #execute the according stateBuilders
-        if reset:    
+
+        # execute the according stateBuilders
+        if reset:
             for sb in self.onceSB:
-                sb(incident, oldstate, newstate, newSession = newSession, reset = reset)
-        if newSession:        
+                sb(incident, oldstate, newstate, newSession=newSession, reset=reset)
+        if newSession:
             for sb in self.sessionSB:
-                sb(incident, oldstate, newstate, newSession = newSession, reset = reset)
+                sb(incident, oldstate, newstate, newSession=newSession, reset=reset)
         if True:
             for sb in self.everySB:
-                sb(incident, oldstate, newstate, newSession = newSession, reset = reset)
-        
-        return newstate.copy() #FIXME pretty sure we do not need the copy anylonger here
-    
+                sb(incident, oldstate, newstate, newSession=newSession, reset=reset)
+
+        return newstate.copy()  # FIXME pretty sure we do not need the copy any longer here
