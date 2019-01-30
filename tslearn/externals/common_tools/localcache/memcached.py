@@ -1,8 +1,8 @@
-'''
+"""
 Created on Mar 16, 2018
 
 @author: marcel.zoll
-'''
+"""
 
 import threading
 import pickle
@@ -13,50 +13,63 @@ _DEFAULT_MEMCACHE_CRED = {'host': 'localhost', 'port': 11211}
 
 
 class MemcachedCache(object):
-    """ a radis cache which stores the states as pickled objects """
+    """ a memcached cache which stores the states as pickled objects """
+
     def __init__(self, master):
-        self.ismaster = False
+        self.is_master = False
         self.wait_on_insert = master.wait_on_insert
         self.memc_params = master.memc_params
         self.val_ttl = master.val_ttl
+
     def __del__(self):
         self.teardown()
+
     def setup(self):
-        self.client = Client((self.memc_params['host'], self.memc_params['port']), default_noreply= not self.wait_on_insert)
+        self.client = Client((self.memc_params['host'], self.memc_params['port']),
+                             default_noreply=not self.wait_on_insert)
         return self
+
     def teardown(self):
         return self
+
     def fetch(self, routingkey, key):
-        cache_key = str(routingkey)+'_'+str(key)
-        obj_pickle = self.client.get(cache_key)        
+        cache_key = str(routingkey) + '_' + str(key)
+        obj_pickle = self.client.get(cache_key)
         if obj_pickle is None:
             return None
         try:
             obj = pickle.loads(obj_pickle)
         except:
-            #logger.debug("Error decoding pickle")
+            # logger.debug("Error decoding pickle")
             obj = None
         return obj
+
     def insert(self, routingkey, key, obj):
-        cache_key = str(routingkey)+'_'+key
+        cache_key = str(routingkey) + '_' + key
         obj_pickle = pickle.dumps(obj)
         if self.wait_on_insert:
-            self.client.set(key= cache_key, value= obj_pickle, expire= self.val_ttl)
-        else:        
-            threading.Thread(target=self.client.set, kwargs={'key': cache_key, 'value': obj_pickle, 'expire': self.val_ttl}, daemon= False).start()
-    def getClient(self):
+            self.client.set(key=cache_key, value=obj_pickle, expire=self.val_ttl)
+        else:
+            threading.Thread(target=self.client.set,
+                             kwargs={'key': cache_key, 'value': obj_pickle, 'expire': self.val_ttl},
+                             daemon=False).start()
+
+    def get_client(self):
         return self.__copy__()
+
     def __copy__(self):
-        if not self.ismaster:
+        if not self.is_master:
             raise Exception('not allowed; already a slave')
         return MemcachedCache(self)
+
     def copy(self):
         return self.__copy__()
-        
+
+
 class MemcachedCache_Master(MemcachedCache, object):
     """ the master instance of the memcached cache interface.
-    copies of this object will NOT share the connection, but instantice their own.
-    When this master is destroyed it can flush the database, effectivly erazing all data
+    copies of this object will NOT share the connection, but instantiate their own.
+    When this master is destroyed it can flush the database, effectively erasing all data
     
     Parameters
     ----------
@@ -69,18 +82,25 @@ class MemcachedCache_Master(MemcachedCache, object):
     flush_on_del : bool
         flush the databases when the object is destroyed (default: False)
     """
-    def __init__(self, db = 0, memc_params = _DEFAULT_MEMCACHE_CRED, wait_on_insert=False, val_ttl= 12, flush_on_del=False):
-        self.ismaster = True
+
+    def __init__(self,
+                 memc_params=_DEFAULT_MEMCACHE_CRED,
+                 wait_on_insert=False,
+                 val_ttl=12,
+                 flush_on_del=False):
+        self.is_master = True
         self.wait_on_insert = wait_on_insert
         self.memc_params = memc_params
         self.val_ttl = val_ttl
-        self.flush_on_del= flush_on_del
-        self.client = None    
+        self.flush_on_del = flush_on_del
+        self.client = None
+
     def __del__(self):
         if self.flush_on_del:
-            self.client = Client((self.memc_params['host'], self.memc_params['port']), default_noreply= not self.wait_on_insert)
+            self.client = Client((self.memc_params['host'], self.memc_params['port']),
+                                 default_noreply=not self.wait_on_insert)
             self.client.flushdb()
-    
+
 
 class MemcachedCache_Pool(object):
     """ an instance that holds a number of connections to a memcached-server with different databases.
@@ -97,23 +117,28 @@ class MemcachedCache_Pool(object):
     flush_on_del : bool
         flush the databases when the object is destroyed (default: False)
     """
+
     def __init__(self,
-            memc_params = _DEFAULT_MEMCACHE_CRED,
-            val_ttl = 0,
-            wait_on_insert= False,
-            flush_on_del = False):
+                 memc_params=_DEFAULT_MEMCACHE_CRED,
+                 val_ttl=0,
+                 wait_on_insert=False,
+                 flush_on_del=False):
         self.memc_params = memc_params
         self.val_ttl = val_ttl
         self.wait_on_insert = wait_on_insert
         self.flush_on_del = flush_on_del
+
     def setup(self):
-        self.client = Client((self.memc_params['host'], self.memc_params['port']), default_noreply= not self.wait_on_insert)
+        self.client = Client((self.memc_params['host'], self.memc_params['port']),
+                             default_noreply=not self.wait_on_insert)
         return self
+
     def teardown(self):
         if self.flush_on_del:
             self.client.flush_all(delay=0, noreply=None)
-        self.client.close()    
+        self.client.close()
         return self
+
     def insert(self, routingkey, key, obj):
         """ insert a _state_ into the database _rk_, at the key _state.key_
         
@@ -121,13 +146,15 @@ class MemcachedCache_Pool(object):
         ----------
         routingkey : int >= 0
             the integer of the database to store this state to
-        state : State obj
-            the State object
+        key : int or str
+            the key at which this object is to be stored
+        obj : class
+            the object to be stored
         """
-        cache_key = str(routingkey)+'_'+key
-        obj_pickle = pickle.dumps(obj) 
-        self.client.set(key= cache_key, value= obj_pickle, expire= self.val_ttl)
-        
+        cache_key = str(routingkey) + '_' + key
+        obj_pickle = pickle.dumps(obj)
+        self.client.set(key=cache_key, value=obj_pickle, expire=self.val_ttl)
+
     def fetch(self, routingkey, key):
         """ insert a _state_ into the database _rk_, at the key _state.key_
         
@@ -140,15 +167,15 @@ class MemcachedCache_Pool(object):
             
         Returns
         -------
-        state : the state
+        obj : the object from the store
         """
-        cache_key = str(routingkey)+'_'+str(key)
-        obj_pickle = self.client.get(cache_key)        
+        cache_key = str(routingkey) + '_' + str(key)
+        obj_pickle = self.client.get(cache_key)
         if obj_pickle is None:
             return None
         try:
             obj = pickle.loads(obj_pickle)
         except:
-            #logger.debug("Error decoding pickle")
+            # logger.debug("Error decoding pickle")
             obj = None
         return obj
