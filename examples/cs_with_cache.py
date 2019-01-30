@@ -6,14 +6,17 @@ Created on Jan 27, 2019
 
 import unittest
 
-from tslearn.extras.clickstream_gen.clickstream_gen import ClickGenerator
-from tslearn.extras.clickstream_gen.sub_gens.url_gen import URLGenerator
-from tslearn.extras.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
+from tslearn.extra.click_stream.clickstream_gen.clickstream_gen import ClickGenerator
+from tslearn.extra.click_stream.clickstream_gen.sub_gens.url_gen import URLGenerator
+from tslearn.extra.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
 
 from tslearn.data_stream.process.states.from_incident import IncidentProcessor
+from tslearn.classes.incident import Incident
+
+from tslearn.state_building.dummy import DummyStateBuilder
 
 
-def testClickStreamSampleGen(self):
+def testClickStreamSampleGen():
 
     # --- generate a fake click-stream
     N_CLICKS_TOTAL = int(1E+4)
@@ -35,8 +38,6 @@ def testClickStreamSampleGen(self):
     clicks = []
     for i in range(N_CLICKS_TOTAL):
         clicks.append(g.next())
-        if i % 50 == 0:
-            print(len(g._active_users))
 
     print(len(clicks))
 
@@ -44,12 +45,14 @@ def testClickStreamSampleGen(self):
     # --- convert clicks to incidents
 
     def incidentConstructor(uid, click):
+        d = click.data.copy()
+        d.update({'TimeStamp': click.ts})
         return Incident(
                 uid = uid,
                 targetid = click.uid,
                 timestamp = click.ts,
                 meta={'origin': 'fakeClickGenerator'},
-                data=click.data)
+                data=d)
 
     incidents = []
     for uid, c in enumerate(clicks):
@@ -63,18 +66,20 @@ def testClickStreamSampleGen(self):
     from tslearn.externals.common_tools.localcache.managed import ManagedCache_Master
     cache = ManagedCache_Master()
 
+    stateBuilder_list = [DummyStateBuilder()]
+
     ip = IncidentProcessor(stateBuilder_list, sessionTrigger, cache)
     ip.setup()
 
     states = []
     for i in incidents:
-        states.append( ip(i) )
+        states.append( ip.process(i) )
 
     ip.teardown()
 
     print( len(states) )
 
+
 if __name__ == "__main__":
-    # import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+    testClickStreamSampleGen()
 

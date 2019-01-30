@@ -63,7 +63,10 @@ class ClickGenerator(object):
             return str(self.uid) + " " + str(self.next_click_time)
 
         def get_gen_dict(self):
-            return [gen.get_dict() for gen in self.generators]
+            d = {}
+            for gen in self.generators:
+                d.update(gen.get_dict())
+            return d
 
 
     def __init__(self, mean_concur_users, CLICK_DECAY_MEAN, TIME_DECAY_MEAN_SEC, generators):
@@ -92,8 +95,6 @@ class ClickGenerator(object):
         self._next_userclick_time = self._active_users[0].next_click_time
         self._next_userjoin_time = now + dt.timedelta(
             seconds=self.TIME_DECAY_MEAN_SEC*((self.CLICK_DECAY_MEAN-1)/self.mean_concur_users + np.random.standard_normal()))
-
-        print(self._next_userjoin_time, self._next_userclick_time)
 
         #call step as many times until the active users have caught up to the now time
         while self._next_userclick_time < now and self._next_userjoin_time < now:

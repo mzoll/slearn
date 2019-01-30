@@ -83,7 +83,7 @@ class ModelProcessor(object):
         targetid = incident.targetid
 
         # - retrive the old (stale) state from store
-        if self._statestorehandler is not None:
+        if self._statecachehandler is not None:
             oldState = self._statecachehandler.fetch(ROUTING_KEY, targetid)
         else:
             oldState = None

@@ -4,19 +4,18 @@ Created on Jan 27, 2019
 @author: marcel.zoll
 """
 
-import unittest
-
-from tslearn.extras.clickstream_gen.clickstream_gen import ClickGenerator
-from tslearn.extras.clickstream_gen.sub_gens.url_gen import URLGenerator
-from tslearn.extras.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
-
-from tslearn.data_stream.pack import DataStreamPack
 import pandas as pd
+import datetime as dt
 
+from tslearn.extra.click_stream.clickstream_gen.clickstream_gen import ClickGenerator
+from tslearn.extra.click_stream.clickstream_gen.sub_gens.url_gen import URLGenerator
+from tslearn.extra.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
+from tslearn.data_stream.pack import DataStreamPack
 from tslearn.data_stream.process.states.from_dsp import playback
+from tslearn.state_building.dummy import DummyStateBuilder
+from tslearn.classes import Incident
 
-
-def testClickStreamSampleGen(self):
+def testClickStreamSampleGen():
 
     # --- generate a fake click-stream
     N_CLICKS_TOTAL = int(1E+4)
@@ -38,8 +37,6 @@ def testClickStreamSampleGen(self):
     clicks = []
     for i in range(N_CLICKS_TOTAL):
         clicks.append(g.next())
-        if i % 50 == 0:
-            print(len(g._active_users))
 
     print(len(clicks))
 
@@ -47,32 +44,39 @@ def testClickStreamSampleGen(self):
     df = pd.DataFrame()
 
     for c in clicks:
-        df.append(pd.Series({"UserID": c.uid, "TimeStamp": c.ts}.update(c.data)))
+        cdict = c.data.copy()
+        cdict.update({"UserId": c.uid, "TimeStamp": c.ts})
+        df = df.append(cdict, ignore_index=True)
+
+    print(df.columns)
+    print(df.shape)
 
     dsp = DataStreamPack(
-        routingkey = 0,
         data=df,
         startTime=min(df['TimeStamp']),
         endTime=max(df['TimeStamp']),
-        meta = {"Fake": True}
+        meta={"Fake": True}
     )
 
     # --- prep for process
 
-    def incidentConstructor(uid, click):
+    def incidentConstructor(uid, click_row):
+        d = click_row.to_dict()
+        uid = d.pop('UserId')
+
         return Incident(
                 uid = uid,
-                targetid = click.uid,
-                timestamp = click.ts,
+                targetid = uid,
+                timestamp = click_row['TimeStamp'],
                 meta={'origin': 'fakeClickGenerator'},
-                data=click.data)
+                data=d)
 
     def sessionTrigger(*args, **kwargs):
         return False
 
     targetid_column = 'UserId'
 
-    stateBuilder_list = []
+    stateBuilder_list = [DummyStateBuilder()]
 
     # --- execute the process
 
@@ -81,7 +85,7 @@ def testClickStreamSampleGen(self):
                          sessionTrigger,
                          stateBuilder_list,
                          targetid_column,
-                         nthreads=-1,
+                         nthreads=1,
                          maxbatchsize=10000)
 
     print( len(states_df) )
@@ -89,5 +93,5 @@ def testClickStreamSampleGen(self):
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+    testClickStreamSampleGen()
 

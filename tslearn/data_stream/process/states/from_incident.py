@@ -31,8 +31,8 @@ class IncidentProcessor(object):
                  statecachehandler=None):
         self._statecachehandler = statecachehandler
 
-        if self._sessiontrigger is None:
-            self._sessiontrigger = SessionTrigger()
+        if sessionTrigger is None:
+            sessionTrigger = SessionTrigger()
 
         self._stateconstructor = StateConstructor(stateBuilder_list, sessionTrigger)
 
@@ -43,7 +43,7 @@ class IncidentProcessor(object):
         targetid = incident.targetid
 
         # - retrive the old (stale) state from store
-        if self._statestorehandler is not None:
+        if self._statecachehandler is not None:
             oldState = self._statecachehandler.fetch(ROUTING_KEY, targetid)
         else:
             oldState = None

@@ -55,7 +55,7 @@ class _ConstructStateCaller:
         out_df = pd.DataFrame()
         
         for idx,row in df.iterrows():
-            incident = self.incidentConstructor(row)
+            incident = self.incidentConstructor(idx, row)
             
             #cleanup State if special conditions apply
             reset = False

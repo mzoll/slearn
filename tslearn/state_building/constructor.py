@@ -66,7 +66,7 @@ class StateConstructor():
         if oldstate is None:
             reset = True
             newSession = True
-            oldstate = State(None, incident.targetid, None, incident.routingkey)
+            oldstate = State(None, incident.targetid, None)
         else:
             newSession = newSession or self.sessionTrigger(incident, oldstate)
 
@@ -76,7 +76,7 @@ class StateConstructor():
 
         # cleanup State if special conditions apply
         if reset:
-            newstate = State(incident.uid, incident.targetid, dt.datetime.now(), incident.routingkey)
+            newstate = State(incident.uid, incident.targetid, dt.datetime.now())
         elif newSession:
             newstate = oldstate.copy()
             newstate.data.clear_session()
