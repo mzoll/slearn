@@ -1,8 +1,8 @@
-'''
+"""
 Created on Jan 22, 2018
 
 @author: marcel.zoll
-'''
+"""
 
 
 class Result(object):
@@ -16,9 +16,7 @@ class Result(object):
         an unique ID (typically UserKey) which can be locally clustered, and signals a grouping
     timestamp : datetime.datetime
         timestamp for sequence order
-    routingkey : obj
-        a key to rout this object through the machinery
-    
+
     Attributes
     ----------
     meta : dict
@@ -30,7 +28,5 @@ class Result(object):
         self.uid = uid
         self.targetid = targetid
         self.timestamp = timestamp
-        self.routingkey = routingkey
         self.meta = meta
         self.data = {}
-    
