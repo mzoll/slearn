@@ -3,7 +3,7 @@ Created on Sep 25, 2017
 
 @author: marcel.zoll
 
-Sequentally construct the State from sequential raw input
+Sequentially construct the State from sequential raw input
 '''
 
 import math
@@ -86,16 +86,20 @@ def constructStates(dsp,
         nthreads = -1,
         maxbatchsize = 10000):
     """ 
-    Construct the state by reading playbackdata linewise and sequentially buildung the state for each line.
+    Construct the state by reading a DataStreamPack linewise and sequentially building the state for each line.
     Parallelism is available.
     
     Parameters
     ----------
-    df : pandas.DataFrame
-        dataframe containing raw incident info
+    dsp : DataStreamPack
+        the packed up data to construct states for
+    incidentConstructor : IncidentConstructor callable
+        how to build linewise the Incident from the data presented in the dataframe
+    sessionTrigger : SessionTrigger obj
+        on the content and diff between two incidents indicates when a new session starts
     stateBuilder_list : list of tslearn.state_building.StateBuilder obj
         the StateBuilders that are applied on the incident data to build states
-    nthreads : int 
+    nthreads : int
         number of processing instances (default: -1)
     maxbatchsize : int >0
         Each processing instance will receive a batch of rows of equal size to process, the maximum batchsize can be limited (default: 10000)
@@ -112,17 +116,18 @@ def constructStates(dsp,
 
     startCallTime = time.perf_counter()
     
-    if ncores==1:
+    if ncores == 1:
         out = _ConstructStateCaller(incidentConstructor, sessionTrigger, stateBuilder_list)(data)
-    elif ncores>1:
+    elif ncores > 1:
         nbatches = max(math.ceil(len(data)/maxbatchsize), ncores)
         g = GenStrategicGroups( data[targetid_column].values, nbatches )
         
         dfGrouped = data.groupby(g)
         func = _ConstructStateCaller(incidentConstructor, sessionTrigger, stateBuilder_list)
-        out = pd.concat(  Parallel(n_jobs=ncores)(delayed(func)(group) for _, group in dfGrouped)  )
-    
+        out = pd.concat( Parallel(n_jobs=ncores)(delayed(func)(group) for _, group in dfGrouped) )
+    else:
+        raise ValueError("ncores is negative : ", ncores)
+
     exectime = time.perf_counter()-startCallTime
     logger.info("ConstructState took %d seconds for %d rows ( %f ms / row / CPU)" % (exectime, data.shape[0], exectime / data.shape[0] * ncores * 1E3))
     return out
-
