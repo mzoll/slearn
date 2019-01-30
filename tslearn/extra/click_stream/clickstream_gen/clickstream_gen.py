@@ -1,12 +1,7 @@
 
 import numpy as np
 import datetime as dt
-import string
 import uuid
-
-
-from tslearn.data_stream.click_stream.sample_gen.url_gen import URLGenerator
-from tslearn.data_stream.click_stream.sample_gen.agent_gen import UserAgentGenerator
 
 
 class Click(object):
