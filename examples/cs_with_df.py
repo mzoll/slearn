@@ -48,9 +48,6 @@ def testClickStreamSampleGen():
         cdict.update({"UserId": c.uid, "TimeStamp": c.ts})
         df = df.append(cdict, ignore_index=True)
 
-    print(df.columns)
-    print(df.shape)
-
     dsp = DataStreamPack(
         data=df,
         startTime=min(df['TimeStamp']),
