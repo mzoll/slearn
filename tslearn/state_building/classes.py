@@ -23,15 +23,30 @@ class StateBuilder():
     outkeys : list of str   
         list of fully qualified names of keys which are output to this stateBuilder, ie 'now__myOutKey'
     """
+
+    class ExecTrigger():
+        """
+        Defines how often a Session Trigger shoulöd be executed :
+        on every tick, only on ticks which trigger a newsession, or only once
+        """
+        every = 0
+        session = 1
+        once = 2
+
     def __init__(self,
             name = '',
             dep = [],
             inkeys = [],
-            outkeys = []):
+            outkeys = [],
+            exec_trigger = None):
         self.name = name
         self.dep = dep
         self.inkeys = inkeys
         self.outkeys = outkeys
+        if exec_trigger is None:
+            self._exec_trigger = self.ExecTrigger.every
+        else:
+            self._exec_trigger = exec_trigger
     def __call__(self, incident, oldState, newState, newSession = False, reset = False):
         """ to be overwritten: convolute an _oldState_ with info from an _incident_ to augment a _newState_
         
@@ -49,25 +64,3 @@ class StateBuilder():
             flag if this is an inital construction of a state
         """
         raise NotImplementedError()
-
-
-#=== Mixin's
-# use this to signal on what condition a StateBuilder needs to be called; every derived StateBuilder should implement
-# one of the following Mixings. This will be heavily used in the actuall StateBuiding process, where it leviates unneccessary
-# double computations
-class EveryMixin():
-    ''' Mixin for StateBuilders are to be executed all the time '''
-    def __call__(self, incident, oldState, newState, newSession = False, reset = False):
-        raise NotImplementedError()
-
-class SessionMixin():
-    ''' Mixin for StateBuilders which are to be executed only at the start of each session '''
-    def __call__(self, incident, oldState, newState, newSession = False, reset = False):
-        if newSession:
-            raise NotImplementedError()
-
-class OnceMixin():
-    ''' Mixin for StateBuilders which are to be executed only once at initial encounter'''
-    def __call__(self, incident, oldState, newState, newSession = False, reset = False):
-        if reset:
-            raise NotImplementedError()

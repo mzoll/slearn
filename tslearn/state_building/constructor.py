@@ -37,11 +37,11 @@ class StateConstructor():
         self.sessionSB = []
         self.everySB = []
         for sb in self.stateBuilder_list:
-            if isinstance(sb, OnceMixin):
+            if sb._exec_trigger == StateBuilder.ExecTrigger.once:
                 self.onceSB.append(sb)
-            elif isinstance(sb, SessionMixin):
+            elif sb._exec_trigger == StateBuilder.ExecTrigger.session:
                 self.sessionSB.append(sb)
-            else:
+            elif sb._exec_trigger == StateBuilder.ExecTrigger.every:
                 self.everySB.append(sb)
 
     def __call__(self, incident, oldstate, reset=False, newSession=False):
