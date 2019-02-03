@@ -51,6 +51,14 @@ class State(object):
             immutable information that is permanently stored (attributes)
         """
 
+        @staticmethod
+        def from_dict(d):
+            dobj = _Data
+            for k, v in d:
+                dobj.__setitem__(k, v)
+            return dobj
+
+
         def __init__(self):
             self.now = {}
             self.prev = {}
@@ -115,12 +123,12 @@ class State(object):
             """ empty everything """
             self.__init__()
 
-    def __init__(self, uid, targetid, timestamp, meta={}):
+    def __init__(self, uid, targetid, timestamp, meta={}, data={}):
         self.uid = uid
         self.targetid = targetid
         self.timestamp = timestamp
         self.meta = meta
-        self.data = self._Data()
+        self.data = self._Data.from_dict(data)
 
     def copy(self):
         """ make a deep copy of this object """
