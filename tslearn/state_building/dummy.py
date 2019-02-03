@@ -7,11 +7,11 @@ Fake the behaviour of a StateBuilder
 '''
 
 import datetime as dt
-from ..state_building.classes import StateBuilder, EveryMixin
+from ..state_building.classes import StateBuilder
 
 from tslearn.externals.common_tools.helpers.value_retrieval import RetrieveValue
 
-class DummyStateBuilder(StateBuilder, EveryMixin):
+class DummyStateBuilder(StateBuilder):
     """ 
     A dummy StateBuilder for internal testing and verifacation purposes.
     Just put out some fake keys so that it looks like as we have worked something 
@@ -21,7 +21,8 @@ class DummyStateBuilder(StateBuilder, EveryMixin):
                 name = 'DummyStateBuilder',
                 dep = [],
                 inkeys = [],
-                outkeys = ['now__Time', 'session__Count', 'perm__AbsCount'])
+                outkeys = ['now__Time', 'session__Count', 'perm__AbsCount'],
+                exec_trigger=StateBuilder.ExecTrigger.every)
     def __call__(self, incident, oldState, newState, newSession = False, reset = False):
         if reset:
             oldState.data.perm['AbsCount'] =0

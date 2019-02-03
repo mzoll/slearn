@@ -7,8 +7,7 @@ Sequentially construct the State from sequential raw input
 """
 
 from tslearn.classes import Incident, State
-from tslearn.state_building.classes import StateBuilder, OnceMixin, SessionMixin, EveryMixin
-
+from tslearn.state_building.classes import StateBuilder
 import datetime as dt
 
 from tslearn.state_building.session import SessionTrigger

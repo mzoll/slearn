@@ -20,7 +20,7 @@ class DataStreamPack(object):
         hold meta information to this data
     """
 
-    def __init__(self,  data, startTime, endTime, meta={}):
+    def __init__(self, data, startTime, endTime, meta={}):
         self.data = data
         self.startTime = startTime
         self.endTime = endTime

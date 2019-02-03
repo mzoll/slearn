@@ -4,27 +4,27 @@ Created on Mar 23, 2018
 @author: marcel.zoll
 '''
 
-from ..prime_building.classes import PrimeBuilder
+from ..State_building.classes import StateBuilder
 from sklearn.base import TransformerMixin
 
-class PrimeBuilderTransPort(TransformerMixin, object):
-    """ select all columns which are produced by these PrimeBuilders
+class StateBuilderTransPort(TransformerMixin, object):
+    """ select all columns which are produced by these StateBuilders
     
     Parameters
     ----------
-    pb_list : list ob PrimeBuilder obj
-        transport and expose these PrimeBuilders
+    pb_list : list ob StateBuilder obj
+        transport and expose these StateBuilders
     """
-    def __init__(self, pb_list):
-        self.pb_list = pb_list        
+    def __init__(self, sb_list):
+        self.sb_list = sb_list
         self.feature_names = []
-        for pb in pb_list:
-            self.feature_names.extend(pb.outkeys) 
+        for sb in sb_list:
+            self.feature_names.extend(sb.outkeys)
     def fit(self, X, y=None, **fit_params):
         return self
     def transform(self, X):
         return X[self.feature_names]
-    def getPrimeBuilders(self):
+    def getStateBuilders(self):
         return self.pb_list    
     def get_feature_names(self):
         return self.feature_names

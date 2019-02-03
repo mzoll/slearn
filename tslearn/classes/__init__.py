@@ -32,5 +32,3 @@ best practices are
 
 from .incident import Incident
 from .state import State
-from .prime import Prime
-from .result import Result
