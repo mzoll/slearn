@@ -19,6 +19,7 @@ class StateBuilderTransPort(TransformerMixin, object):
         self.sb_list = sb_list
         self.feature_names = []
         for sb in sb_list:
+            assert( isintance(sb, StateBuilder) )
             self.feature_names.extend(sb.outkeys)
     def fit(self, X, y=None, **fit_params):
         return self
