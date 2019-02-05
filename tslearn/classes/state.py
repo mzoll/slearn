@@ -53,11 +53,10 @@ class State(object):
 
         @staticmethod
         def from_dict(d):
-            dobj = _Data
+            dobj = State._Data()
             for k, v in d:
                 dobj.__setitem__(k, v)
             return dobj
-
 
         def __init__(self):
             self.now = {}

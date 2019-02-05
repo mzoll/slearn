@@ -13,9 +13,11 @@ from tslearn.externals.common_tools.helpers.value_retrieval import RetrieveValue
 
 class DummyStateBuilder(StateBuilder):
     """ 
-    A dummy StateBuilder for internal testing and verifacation purposes.
+    A dummy StateBuilder for internal testing and verification purposes.
     Just put out some fake keys so that it looks like as we have worked something 
     """
+    inkeys = []  # in and outkeys can be shared between instances, its okay - I think ...
+    outkeys = ['now__Time', 'session__Count', 'perm__AbsCount']
     def __init__(self):
         StateBuilder.__init__(self,
                 name = 'DummyStateBuilder',

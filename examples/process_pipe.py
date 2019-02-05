@@ -20,43 +20,37 @@ from sklearnext.transformers.assembled.timestamp import TimestampTransformer
 from sklearnext.transformers.label import OneHotTransformer
 from sklearnext.transformers.cyclic import CyclicSinCosTransformer
 
-
+from sklearnext.transformers.assembled.timestamp import TimestampTransformer
 
 
 
 def assemblePipeline():
+    # FIXME here something more sensible must be, possible rigged for clickstreams
+
     # assemble the pipeline by bits an pieces
 
     # OneHot/Label encoding for feature 'Label'
     tf0 = TransformerPipe([
-        ('devicebuilder', StateBuilderTransport([DeviceStateBuilder()])),
-        ('labelEnc', OneHotTransformer())
+        ('devicebuilder', StateBuilderTransport([DummyStateBuilder])),
+        # produces the fileds:
+        #   'now__Time' (a time-like feature),
+        #   'session__Count' (a linear feature),
+        #   'perm__AbsCount' (a linear feature)
+        ('fu', FeatureUnion([
+            ('tp0', TransformerPipe([
+                ('cs', ColumnsSelect('now__Time')),
+                ('trans', TimestampTransformer('now__Time'))
+            ])),
+            ('tp1', TransformerPipe([
+                ('cs', ColumnsSelect('session__Count')),
+                ('minmax', MinMaxScalar())
+            ])),
+            ('tp2', TransformerPipe([
+                ('cs', ColumnsSelect('perm__AbsCount')),
+                ('minmax', MinMaxScalar())
+            ])),
+        ])),
     ])
-
-    # Extraction of Hour and Day-of-Month fromfeature  'Time'
-    tf1 = TransformerPipe([
-        ('startTimeBuilder', StateBuilderTransPort([NowtimeStateBuilder()])),
-        ('timestamp', TimestampTransformer())
-    ])
-
-    tf2 = TransformerPipe([
-        ('sessionDurationBuilder', StateBuilderTransPort([SessiondurationStateBuilder()])),
-    ])
-
-    tf3 = TransformerPipe([
-        ('sessionLengthBuilder', StateBuilderTransPort([SessiondurationStateBuilder()])),
-    ])
-
-
-    # assemble a set of to use features
-    fu = FeatureUnion([
-        ('tf0', tf0),
-        ('tf1', tf1),
-        ('tf2', tf2),
-        ('tf3', tf3),
-        ('tf2', ColumnsSelect('Cont'))  # feature 'Cont' could have been wrapped into its own pipeline,
-        # but no need to convolute as already in correct format
-    ], n_jobs=1)
 
     # define a Classifier estimator; here one that is smarter as the average by growing additional trees
     skl_c0 = GrowingGBClassifier(ntrees_start=100,
@@ -76,20 +70,13 @@ def assemblePipeline():
     # as OneProbClassifier (and GrowingGBClassifier) are using the sklearn interface, make them sklearnext compatible
     cc0 = SKLEstimatorExtender(skl_cc0)
 
-    # this is a complete pipeline, which uses all features except 'Device'
+    # this is a complete pipeline
     pred_pipe = Pipeline([
         ("fu", fu),
         ("cc0", cc0)
     ])
 
-    # make a categorical fork for the feature Device, which has two levels
-    cf = CategoryFork(pred_pipe,
-                      'Device',
-                      [('A'), ('B')],
-                      n_jobs=1)
-
-    # define this by an alias
-    return cf
+    return pred_pipe
 
 
 def gen_click_stream_sample(
