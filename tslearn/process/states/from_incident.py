@@ -39,7 +39,14 @@ class IncidentProcessor(object):
         self._setup = False
 
     def process(self, incident):
-        """ take an incident and comstruct from it the new state by querying the cache """
+        """ take an incident and comstruct from it the new state by querying the cache
+
+        :param incident: Incident
+            incoming Incident with new information
+
+        :returns newState: State
+            the state that has been augmented with info from the incident
+        """
         targetid = incident.targetid
 
         # - retrive the old (stale) state from store
