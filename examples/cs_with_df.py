@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Created on Jan 27, 2019
 
@@ -6,7 +8,7 @@ Created on Jan 27, 2019
 
 import pandas as pd
 from tslearn.data_stream.pack import DataStreamPack
-from tslearn.data_stream.process.states.from_dsp import playback
+from tslearn.process.states.from_dsp import playback
 from tslearn.state_building.dummy import DummyStateBuilder
 from tslearn.classes import Incident
 from webclickgen import WebClickStreamGen

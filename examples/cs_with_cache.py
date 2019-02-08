@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Created on Jan 27, 2019
 
@@ -5,7 +7,7 @@ Created on Jan 27, 2019
 """
 
 from webclickgen import WebClickStreamGen
-from tslearn.data_stream.process.states.from_incident import IncidentProcessor
+from tslearn.process.states.from_incident import IncidentProcessor
 from tslearn.classes.incident import Incident
 
 from tslearn.state_building.dummy import DummyStateBuilder

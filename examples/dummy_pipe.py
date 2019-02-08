@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Created on Jan 27, 2019
 
@@ -6,19 +8,19 @@ Created on Jan 27, 2019
 
 import pandas as pd
 import datetime as dt
+import uuid
 
-from tslearn.extra.click_stream.clickstream_gen.clickstream_gen import ClickGenerator
-from tslearn.extra.click_stream.clickstream_gen.sub_gens.url_gen import URLGenerator
-from tslearn.extra.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
 from tslearn.data_stream.pack import DataStreamPack
-from tslearn.data_stream.process.states.from_dsp import playback
+from tslearn.process.states.from_dsp import playback
 from tslearn.state_building.dummy import DummyStateBuilder
 from tslearn.classes import Incident
 
 from tslearn.sklearnext.assembly import TransformerPipe, FeatureUnion
-from sklearnext.transformers.assembled.timestamp import TimestampTransformer
-from sklearnext.transformers.label import OneHotTransformer
-from sklearnext.transformers.cyclic import CyclicSinCosTransformer
+from tslearn.sklearnext.transport import StateBuilderTransPort
+from tslearn.sklearnext.assembly import ColumnsSelect
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearnext.transformers.wrappers import SKLTransformerWrapper
 
 from sklearnext.transformers.assembled.timestamp import TimestampTransformer
 
@@ -29,7 +31,7 @@ def assemblePipeline():
 
     # OneHot/Label encoding for feature 'Label'
     tf0 = TransformerPipe([
-        ('devicebuilder', StateBuilderTransport([DummyStateBuilder])),
+        ('devicebuilder', StateBuilderTransPort([DummyStateBuilder])),
         # produces the fileds:
         #   'now__Time' (a time-like feature),
         #   'session__Count' (a linear feature),
@@ -41,11 +43,11 @@ def assemblePipeline():
             ])),
             ('tp1', TransformerPipe([
                 ('cs', ColumnsSelect('session__Count')),
-                ('minmax', MinMaxScalar())
+                ('minmax', SKLTransformerWrapper(MinMaxScaler()))
             ])),
             ('tp2', TransformerPipe([
                 ('cs', ColumnsSelect('perm__AbsCount')),
-                ('minmax', MinMaxScalar())
+                ('minmax', SKLTransformerWrapper(MinMaxScaler()))
             ])),
         ])),
     ])
@@ -81,9 +83,10 @@ def gen_incidents(nmany):
     uid = 1
     i_uuid = str(uuid.uuid4())
     incidents = []
-    for _ in range(nmany);
-        incidents.append( Incident(uid, i_uuid, dt.datetime.utcnow(), meta={}, data={})  )
+    for _ in range(nmany):
+        incidents.append( Incident(uid, i_uuid, dt.datetime.utcnow(), meta={}, data={}) )
         uid += 1
+    return incidents
 
 
 def convert_to_dsp(incs):
@@ -104,7 +107,6 @@ def convert_to_dsp(incs):
 
 
 def main():
-
     incs = gen_incidents()
 
     # --- convert clicks to dataframe and eventually DataStreamPack
