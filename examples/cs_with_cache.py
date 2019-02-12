@@ -12,6 +12,7 @@ from tslearn.classes.incident import Incident
 
 from tslearn.state_building.dummy import DummyStateBuilder
 
+
 N_CLICKS_TOTAL = int(1E+4)
 
 def testClickStreamSampleGen():
