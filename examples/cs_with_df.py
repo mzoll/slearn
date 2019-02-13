@@ -7,10 +7,10 @@ Created on Jan 27, 2019
 """
 
 import pandas as pd
-from tslearn.data_stream.pack import DataStreamPack
-from tslearn.process.states.from_dsp import playback
-from tslearn.state_building.dummy import DummyStateBuilder
-from tslearn.classes import Incident
+from slearn.data_stream.pack import DataStreamPack
+from slearn.process.states.from_dsp import playback
+from slearn.state_building.dummy import DummyStateBuilder
+from slearn.classes import Incident
 from webclickgen import WebClickStreamGen
 
 

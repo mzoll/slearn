@@ -5,10 +5,10 @@ Created on Jan 25, 2018
 '''
 import unittest
 
-from tslearn.classes import State
-from tslearn.classes import Incident
-from tslearn.classes import Prime
-from tslearn.classes import Result
+from slearn.classes import State
+from slearn.classes import Incident
+from slearn.classes import Prime
+from slearn.classes import Result
 
 import datetime as dt
 

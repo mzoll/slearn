@@ -9,7 +9,7 @@ Fake the behaviour of a StateBuilder
 import datetime as dt
 from ..state_building.classes import StateBuilder
 
-from tslearn.externals.common_tools.helpers.value_retrieval import RetrieveValue
+from slearn.externals.common_tools.helpers.value_retrieval import RetrieveValue
 
 class DummyStateBuilder(StateBuilder):
     """ 

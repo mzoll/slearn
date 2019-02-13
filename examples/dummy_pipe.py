@@ -10,14 +10,14 @@ import pandas as pd
 import datetime as dt
 import uuid
 
-from tslearn.data_stream.pack import DataStreamPack
-from tslearn.process.states.from_dsp import playback
-from tslearn.state_building.dummy import DummyStateBuilder
-from tslearn.classes import Incident
+from slearn.data_stream.pack import DataStreamPack
+from slearn.process.states.from_dsp import playback
+from slearn.state_building.dummy import DummyStateBuilder
+from slearn.classes import Incident
 
-from tslearn.sklearnext.assembly import TransformerPipe, FeatureUnion
-from tslearn.sklearnext.transport import StateBuilderTransPort
-from tslearn.sklearnext.assembly import ColumnsSelect
+from slearn.sklearnext.assembly import TransformerPipe, FeatureUnion
+from slearn.sklearnext.transport import StateBuilderTransPort
+from slearn.sklearnext.assembly import ColumnsSelect
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearnext.transformers.wrappers import SKLTransformerWrapper

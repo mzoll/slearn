@@ -14,18 +14,18 @@ import logging
 logger = logging.getLogger('process')
 
 from joblib import Parallel, delayed
-from tslearn.externals.common_tools.tools.groups import GenStrategicGroups
-from tslearn.externals.common_tools.parallelism import GetNCores
+from slearn.externals.common_tools.tools.groups import GenStrategicGroups
+from slearn.externals.common_tools.parallelism import GetNCores
 
-from tslearn.classes import State
-from tslearn.state_building.constructor import StateConstructor
+from slearn.classes import State
+from slearn.state_building.constructor import StateConstructor
 
 
 class _ConstructStateCaller:
     """ caller class which knows how to process sequentially and is fed linewise from pbd.
     
     This component just validates and packs the correct incidents and stale states together and 
-    let them be processed by the tslearn::StateConstructor. In the end it extracts the data field
+    let them be processed by the slearn::StateConstructor. In the end it extracts the data field
     from the returned State and returns a dateframe of these
     
     NOTE : this thing does not know anything about the inital stale state, so the first state
@@ -37,7 +37,7 @@ class _ConstructStateCaller:
         how to build linewise the Incident from the data presented in the dataframe 
     sessionTrigger : SessionTrigger obj
         on the content and diff between two incidents indicates when a new session starts
-    stateBuilder_list : list of tslearn.state_building.StateBuilder obj
+    stateBuilder_list : list of slearn.state_building.StateBuilder obj
         the StateBuilders that are applied on the incident data to build states
     """
     def __init__(self,
@@ -97,7 +97,7 @@ def playback(dsp,
         how to build linewise the Incident from the data presented in the dataframe
     sessionTrigger : SessionTrigger obj
         on the content and diff between two incidents indicates when a new session starts
-    stateBuilder_list : list of tslearn.state_building.StateBuilder obj
+    stateBuilder_list : list of slearn.state_building.StateBuilder obj
         the StateBuilders that are applied on the incident data to build states
     nthreads : int
         number of processing instances (default: -1)

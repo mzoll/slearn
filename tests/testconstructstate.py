@@ -9,12 +9,12 @@ import unittest
 import pandas as pd
 import datetime as dt
 
-from tslearn.data_stream.pack import DataStreamPack
-from tslearn.data_stream.process.states.from_dsp import constructStates
+from slearn.data_stream.pack import DataStreamPack
+from slearn.data_stream.process.states.from_dsp import constructStates
 
-from tslearn.state_building.dummy import DummyStateBuilder
+from slearn.state_building.dummy import DummyStateBuilder
 
-from tslearn.data_stream.click_stream.playback.incidents import dsprow_to_incident
+from slearn.data_stream.click_stream.playback.incidents import dsprow_to_incident
 
 
 class Test(unittest.TestCase):

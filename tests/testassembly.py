@@ -7,7 +7,7 @@ Created on Feb 4, 2018
 import unittest
 
 import pandas as pd
-from tslearn.sklearnext.assembly import Pipeline, TransformerPipe, FeatureUnion, ColumnsAll, ColumnsSelect
+from slearn.sklearnext.assembly import Pipeline, TransformerPipe, FeatureUnion, ColumnsAll, ColumnsSelect
 from sklearnext.sklearn.estimators.dummy import DummyClassifier
 from sklearnext.transformers.sequence_vector import SequenceVectorCheckboxes
 from sklearnext.estimators.wrappers import SKLEstimatorExtender

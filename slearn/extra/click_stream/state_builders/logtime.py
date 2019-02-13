@@ -1,4 +1,4 @@
-from tslearn.state_building.classes import StateBuilder, EveryMixin, SessionMixin, OnceMixin
+from slearn.state_building.classes import StateBuilder, EveryMixin, SessionMixin, OnceMixin
 
 class LogTimeStateBuilder(EveryMixin, StateBuilder):
     """simply write the time as the current time """

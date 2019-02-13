@@ -7,15 +7,15 @@ Created on Jan 27, 2019
 import pandas as pd
 import datetime as dt
 
-from tslearn.extra.click_stream.clickstream_gen.clickstream_gen import ClickGenerator
-from tslearn.extra.click_stream.clickstream_gen.sub_gens.url_gen import URLGenerator
-from tslearn.extra.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
-from tslearn.data_stream.pack import DataStreamPack
-from tslearn.data_stream.process.states.from_dsp import playback
-from tslearn.state_building.dummy import DummyStateBuilder
-from tslearn.classes import Incident
+from slearn.extra.click_stream.clickstream_gen.clickstream_gen import ClickGenerator
+from slearn.extra.click_stream.clickstream_gen.sub_gens.url_gen import URLGenerator
+from slearn.extra.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
+from slearn.data_stream.pack import DataStreamPack
+from slearn.data_stream.process.states.from_dsp import playback
+from slearn.state_building.dummy import DummyStateBuilder
+from slearn.classes import Incident
 
-from tslearn.sklearnext.assembly import TransformerPipe, FeatureUnion
+from slearn.sklearnext.assembly import TransformerPipe, FeatureUnion
 from sklearnext.transformers.assembled.timestamp import TimestampTransformer
 from sklearnext.transformers.label import OneHotTransformer
 from sklearnext.transformers.cyclic import CyclicSinCosTransformer

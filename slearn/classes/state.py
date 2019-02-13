@@ -7,8 +7,8 @@ Created on Oct 26, 2017
 import copy
 import json
 
-from tslearn.externals.common_tools.tools.dt_parse import datetime_from_isostring
-from tslearn.externals.common_tools.tools.json_enc import json_serializer
+from slearn.externals.common_tools.tools.dt_parse import datetime_from_isostring
+from slearn.externals.common_tools.tools.json_enc import json_serializer
 
 
 class State(object):

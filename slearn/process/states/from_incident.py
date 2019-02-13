@@ -4,9 +4,9 @@ Created on Jan 30, 2019
 @author: marcel.zoll
 """
 
-from tslearn.state_building.constructor import StateConstructor
+from slearn.state_building.constructor import StateConstructor
 
-from tslearn.state_building.session import SessionTrigger
+from slearn.state_building.session import SessionTrigger
 ROUTING_KEY = 0
 
 

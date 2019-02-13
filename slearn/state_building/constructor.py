@@ -6,11 +6,11 @@ Created on Sep 25, 2017
 Sequentially construct the State from sequential raw input
 """
 
-from tslearn.classes import Incident, State
-from tslearn.state_building.classes import StateBuilder
+from slearn.classes import Incident, State
+from slearn.state_building.classes import StateBuilder
 import datetime as dt
 
-from tslearn.state_building.session import SessionTrigger
+from slearn.state_building.session import SessionTrigger
 
 
 class StateConstructor():

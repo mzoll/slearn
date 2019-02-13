@@ -7,10 +7,10 @@ Created on Jan 27, 2019
 """
 
 from webclickgen import WebClickStreamGen
-from tslearn.process.states.from_incident import IncidentProcessor
-from tslearn.classes.incident import Incident
+from slearn.process.states.from_incident import IncidentProcessor
+from slearn.classes.incident import Incident
 
-from tslearn.state_building.dummy import DummyStateBuilder
+from slearn.state_building.dummy import DummyStateBuilder
 
 
 N_CLICKS_TOTAL = int(1E+4)
@@ -45,7 +45,7 @@ def testClickStreamSampleGen():
 
 
     # --- prepare for processing
-    from tslearn.externals.common_tools.localcache.managed import ManagedCache_Master
+    from slearn.externals.common_tools.localcache.managed import ManagedCache_Master
     cache = ManagedCache_Master()
 
     stateBuilder_list = [DummyStateBuilder()]
