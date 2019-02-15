@@ -106,6 +106,11 @@ class State(object):
                     return self._props[cat][key]
             return None
 
+        def update(self, d):
+            """ with a bunch of stuff from a dictionary"""
+            for k,v in d.items():
+                self.__setitem__(k, v)
+
         def copy(self):
             """ make a deep copy """
             return copy.deepcopy(self)
