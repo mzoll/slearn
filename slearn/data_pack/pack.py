@@ -39,7 +39,19 @@ class _DataPack(object):
         return len(self.header)
 
     def items(self):
+        """ get the item representation of the data in this object """
         raise NotImplementedError()
+
+    def append(self, other):
+        """ append another object of the same class as this, where the data is the union of both """
+        assert(isinstance(other, self.__class__))
+        self.header = self.header.append(other.header, ignore_index=True)
+        self.header = self.header.reindex()
+        self.meta = self.meta.append(other.meta, ignore_index=True)
+        self.meta.index = self.header.index
+        self.data = self.data.append(other.data, ignore_index=True)
+        self.data.index = self.header.index
+
 
 class IncidentPack(_DataPack):
     def items(self):
