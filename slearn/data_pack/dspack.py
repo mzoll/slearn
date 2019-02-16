@@ -4,7 +4,10 @@ Created on Dez 03, 2017
 @author: marcel.zoll
 """
 
+import deprecation
 
+
+@deprecation.deprecated(details="This class will be removed")
 class DataStreamPack(object):
     """ collection holding data received from a DW database server (formerly process-data)
     

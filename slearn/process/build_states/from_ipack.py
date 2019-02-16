@@ -9,16 +9,20 @@ Sequentially construct the State from sequential raw input
 import math
 import time
 import pandas as pd
+import numpy as np
 
 import logging
-logger = logging.getLogger('process')
 
 from joblib import Parallel, delayed
 from slearn.externals.common_tools.tools.groups import GenStrategicGroups
 from slearn.externals.common_tools.parallelism import GetNCores
 
-from slearn.classes import State
+from slearn.classes import State, Incident
 from slearn.state_building.constructor import StateConstructor
+
+from slearn.data_pack.pack import StatePack, IncidentPack
+
+logger = logging.getLogger('process')
 
 
 class _ConstructStateCaller:
@@ -41,27 +45,25 @@ class _ConstructStateCaller:
         the StateBuilders that are applied on the incident data to build states
     """
     def __init__(self,
-            incidentConstructor,
             sessionTrigger,
             stateBuilder_list):
-        self.incidentConstructor = incidentConstructor
         self.stateBuilder_list = stateBuilder_list
         #-----------------------------------
         self.stateConstructor = StateConstructor(stateBuilder_list, sessionTrigger)
         #---------- variables for the rolling state ---
-        self.targetKey = ""
-        self.staleState = State(None, "", None)
-    def __call__(self, df):
+        self._targetKey = ""
+        self._staleState = State(None, "", None)
+    def __call__(self, g, df):
         out_df = pd.DataFrame()
-        
-        for idx,row in df.iterrows():
-            incident = self.incidentConstructor(idx, row)
+        df.index = g
+        for gidx,row in df.iterrows():
+            incident = Incident(None, gidx, None, data=row.as_dict())
             
             #cleanup State if special conditions apply
             reset = False
             newSession = False
-            if incident.targetid != self.targetKey :
-                self.targetKey = incident.targetid
+            if incident.targetid != self._targetKey :
+                self._targetKey = incident.targetid
                 reset = True
                 newSession = True
                 self.staleState = None
@@ -70,28 +72,29 @@ class _ConstructStateCaller:
             #make a simple copy of the meta information for now
             newState.meta = incident.meta.copy()
             
-            out_df = out_df.append( pd.Series(newState.data.to_flatdict().copy(), name=idx) )
+            out_df = out_df.append( pd.Series(newState.data.to_flatdict().copy()) )
             
             # the newly updated state becomes the stale state for the next iteration step
-            self.staleState = newState
+            self._staleState = newState
         
         return out_df
             
 
-def playback(dsp,
-        incidentConstructor,
-        sessionTrigger,
-        stateBuilder_list,
-        targetid_column,
-        nthreads = -1,
-        maxbatchsize = 10000):
+def process(incidentpack,
+            sessionTrigger,
+            stateBuilder_list,
+            nthreads = -1,
+            maxbatchsize = 10000):
     """ 
-    Construct the state by reading a DataStreamPack linewise and sequentially building the state for each line.
+    Construct the state by reading a DataStreamPack line-wise and sequentially building the state for each line.
     Parallelism is available.
+
+    This is an atomic and agnostic operation, so states are build by just the information from the statepack;
+    no external resources are utilized
     
     Parameters
     ----------
-    dsp : DataStreamPack
+    statepack : StatePack
         the packed up data to construct states for
     incidentConstructor : IncidentConstructor callable
         how to build linewise the Incident from the data presented in the dataframe
@@ -102,32 +105,46 @@ def playback(dsp,
     nthreads : int
         number of processing instances (default: -1)
     maxbatchsize : int >0
-        Each processing instance will receive a batch of rows of equal size to process, the maximum batchsize can be limited (default: 10000)
+        Each processing instance will receive a batch of rows of equal size to process, the maximum batchsize can be
+        limited (default: 10000)
     
     Returns
     -------
-    indexed pandas.DataFrame containing the fields of the generated states as columns.
+    statepack: StatePack of processed data
     """
-    data = dsp.data
-    data.sort_index(inplace=True)
-    data.sort_values([targetid_column], inplace=True)
+    assert(isinstance(incidentpack, IncidentPack))
+
+    header = incidentpack.header.copy()
+    data = incidentpack.data.copy()
+    meta = incidentpack.meta.copy()
+    header.sort_values(['tid','uid'], inplace=True)
+    data.reindex(header.index, inplace=True)
+    meta.reindex(header.index, inplace=True)
 
     ncores = GetNCores(nthreads)
 
     startCallTime = time.perf_counter()
     
     if ncores == 1:
-        out = _ConstructStateCaller(incidentConstructor, sessionTrigger, stateBuilder_list)(data)
+        outdata = _ConstructStateCaller(sessionTrigger, stateBuilder_list)(np.ones(len(data)), data)
     elif ncores > 1:
         nbatches = max(math.ceil(len(data)/maxbatchsize), ncores)
-        g = GenStrategicGroups( data[targetid_column].values, nbatches )
+        g = GenStrategicGroups( header['tid'].values, nbatches )
         
         dfGrouped = data.groupby(g)
-        func = _ConstructStateCaller(incidentConstructor, sessionTrigger, stateBuilder_list)
-        out = pd.concat( Parallel(n_jobs=ncores)(delayed(func)(group) for _, group in dfGrouped) )
+        func = _ConstructStateCaller(sessionTrigger, stateBuilder_list)
+        outdata = pd.concat( Parallel(n_jobs=ncores)(delayed(func)(group) for _, group in dfGrouped) )
     else:
         raise ValueError("ncores is negative : ", ncores)
 
     exectime = time.perf_counter()-startCallTime
     logger.info("ConstructState took %d seconds for %d rows ( %f ms / row / CPU)" % (exectime, data.shape[0], exectime / data.shape[0] * ncores * 1E3))
-    return out
+
+    header.reindex(inplace=True)
+    outdata.reindex(inplace=True)
+    meta.reindex(inplace=True)
+    header.sort_values('tid', inplace=True)
+    outdata.reindex(header.index, inplace=True)
+    meta.reindex(header.index, inplace=True)
+
+    return StatePack(header, outdata, meta)

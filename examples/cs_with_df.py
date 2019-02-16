@@ -7,8 +7,8 @@ Created on Jan 27, 2019
 """
 
 import pandas as pd
-from slearn.data_stream.pack import DataStreamPack
-from slearn.process.states.from_dsp import playback
+from slearn.data_pack.dspack import DataStreamPack
+from slearn.process.build_states.from_ipack import process
 from slearn.state_building.dummy import DummyStateBuilder
 from slearn.classes import Incident
 from webclickgen import WebClickStreamGen
@@ -62,13 +62,13 @@ def testClickStreamSampleGen():
 
     # --- execute the process
 
-    states_df = playback(dsp,
-                         incidentConstructor,
-                         sessionTrigger,
-                         stateBuilder_list,
-                         targetid_column,
-                         nthreads=1,
-                         maxbatchsize=10000)
+    states_df = process(dsp,
+                        incidentConstructor,
+                        sessionTrigger,
+                        stateBuilder_list,
+                        targetid_column,
+                        nthreads=1,
+                        maxbatchsize=10000)
 
     print( len(states_df) )
 

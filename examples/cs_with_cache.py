@@ -7,7 +7,7 @@ Created on Jan 27, 2019
 """
 
 from webclickgen import WebClickStreamGen
-from slearn.process.states.from_incident import IncidentProcessor
+from slearn.process.build_states.from_inc import IncidentProcessor
 from slearn.classes.incident import Incident
 
 from slearn.state_building.dummy import DummyStateBuilder

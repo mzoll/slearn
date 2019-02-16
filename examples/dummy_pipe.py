@@ -10,8 +10,8 @@ import pandas as pd
 import datetime as dt
 import uuid
 
-from slearn.data_stream.pack import DataStreamPack
-from slearn.process.states.from_dsp import playback
+from slearn.data_pack.dspack import DataStreamPack
+from slearn.process.build_states.from_ipack import process
 from slearn.state_building.dummy import DummyStateBuilder
 from slearn.classes import Incident
 
@@ -131,13 +131,13 @@ def main():
     def sessionTrigger(*args, **kwargs):
         return False
 
-    states_df = playback(dsp,
-                         incidentConstructor,
-                         sessionTrigger,
-                         stateBuilder_list = pred_pipe.getStateBuilders(),
-                         targetid_column = 'UserId',
-                         nthreads=1,
-                         maxbatchsize=10000)
+    states_df = process(dsp,
+                        incidentConstructor,
+                        sessionTrigger,
+                        stateBuilder_list = pred_pipe.getStateBuilders(),
+                        targetid_column = 'UserId',
+                        nthreads=1,
+                        maxbatchsize=10000)
 
     print( len(states_df) )
 

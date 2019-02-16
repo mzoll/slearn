@@ -10,8 +10,8 @@ import datetime as dt
 from slearn.extra.click_stream.clickstream_gen.clickstream_gen import ClickGenerator
 from slearn.extra.click_stream.clickstream_gen.sub_gens.url_gen import URLGenerator
 from slearn.extra.click_stream.clickstream_gen.sub_gens.agent_gen import UserAgentGenerator
-from slearn.data_stream.pack import DataStreamPack
-from slearn.data_stream.process.states.from_dsp import playback
+from slearn.data_pack.dspack import DataStreamPack
+from slearn.data_pack.process.states.from_dsp import playback
 from slearn.state_building.dummy import DummyStateBuilder
 from slearn.classes import Incident
 
