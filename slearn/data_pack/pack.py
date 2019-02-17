@@ -5,20 +5,23 @@ Created on Feb 17, 2019
 """
 
 
-class _DataPack(object):
+class DataPack(object):
     """ collection holding data representing any of the internal classes
     
     Attributes
     ----------
-    data : pandas.DataFrame
-        holds the row-wise data aligned on index
+    cls : class
+        class thois object is keyed to
     header : pandas.DataFrame
         holds the states' header information aligned on index
+    data : pandas.DataFrame
+        holds the row-wise data aligned on index
     meta : pandas.DataFrame
         holds the states' meta information aligned on index
     """
 
-    def __init__(self, header, data, meta):
+    def __init__(self, cls, header, data, meta):
+        self.cls = cls
         self.header = header
         self.data = data
         self.meta = meta
@@ -38,10 +41,6 @@ class _DataPack(object):
     def __len__(self):
         return len(self.header)
 
-    def items(self):
-        """ get the item representation of the data in this object """
-        raise NotImplementedError()
-
     def append(self, other):
         """ append another object of the same class as this, where the data is the union of both """
         assert(isinstance(other, self.__class__))
@@ -52,26 +51,13 @@ class _DataPack(object):
         self.data = self.data.append(other.data, ignore_index=True)
         self.data.index = self.header.index
 
-
-class IncidentPack(_DataPack):
     def items(self):
-        incidents = []
+        """ get the item representation of the data in this object """
+        objs = []
         for i in range(len(self)):
-            inc = Incident(
+            obj = self.cls(
                 **self.header.iloc[i].as_dict(),
                 data=self.data.iloc[i].as_dict(),
                 meta=self.meta.iloc[i].as_dict())
-            incidents.append(inc)
-        return incidents
-
-class StatePack(_DataPack):
-    def items(self):
-        states = []
-        for i in range(len(self)):
-            state = State(
-                **self.header.iloc[i].as_dict(),
-                meta = self.meta.iloc[i].as_dict())
-            state.data.update( self.data.iloc[i].as_dict() )
-            states.append(state)
-        return states
-
+            objs.append(obj)
+        return objs
