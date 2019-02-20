@@ -54,7 +54,7 @@ class State(object):
         @staticmethod
         def from_dict(d):
             dobj = State._Data()
-            for k, v in d:
+            for k, v in d.items():
                 dobj.__setitem__(k, v)
             return dobj
 
