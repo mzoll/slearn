@@ -71,7 +71,6 @@ class StateConstructor():
 
         # NOTE asserts disabled for speed
         # assert( oldstate.targetid == request.targetid)
-        # assert( oldstate.routingkey == request.routingkey)
 
         # cleanup State if special conditions apply
         if reset:
