@@ -30,7 +30,7 @@ def testClickStreamSampleGen():
 
     for c in clicks:
         cdict = c.data.copy()
-        cdict.update({"UserId": c.uid, "TimeStamp": c.ts})
+        cdict.update({"UserId": c.userid, "TimeStamp": c.ts})
         df = df.append(cdict, ignore_index=True)
 
     dsp = DataStreamPack(

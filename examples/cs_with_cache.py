@@ -31,7 +31,7 @@ def testClickStreamSampleGen():
         d.update({'TimeStamp': click.ts})
         return Incident(
                 uid = uid,
-                targetid = click.uid,
+                targetid = click.userid,
                 timestamp = click.ts,
                 meta={'origin': 'fakeClickGenerator'},
                 data=d)
