@@ -24,7 +24,7 @@ class DataPack(object):
 
     def __init__(self, cls, data_df, uid_fname, targetid_fname, timestamp_fname, meta_fnames, data_fnames):
         self.cls = cls
-        self.data_df = data_df,
+        self.data_df = data_df
         self.uid_fname = uid_fname
         self.targetid_fname = targetid_fname
         self.timestamp_fname = timestamp_fname
@@ -59,11 +59,11 @@ class DataPack(object):
         return self.data_df[self.timestamp_fname]
     @property
     def meta(self):
-        return self.data[self.meta_fnames]
+        return self.data_df[self.meta_fnames]
 
     @property
     def data(self):
-        return self.data[self.data_fnames]
+        return self.data_df[self.data_fnames]
 
     def append(self, other):
         """ append another object of the same class as this, where the data is the union of both """
@@ -75,7 +75,7 @@ class DataPack(object):
         objs = []
         for i in range(len(self)):
             obj = self.cls(
-                uid=self.uid_fanme, targetid=self.targetid_fname, timestamp=self.timesstamp_fname,
+                uid=self.uid_fname, targetid=self.targetid_fname, timestamp=self.timestamp_fname,
                 data=self.data.iloc[i].as_dict(),
                 meta=self.meta.iloc[i].as_dict())
             objs.append(obj)
