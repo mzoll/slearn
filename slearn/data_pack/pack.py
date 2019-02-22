@@ -11,52 +11,71 @@ class DataPack(object):
     Attributes
     ----------
     cls : class
-        class thois object is keyed to
-    header : pandas.DataFrame
-        holds the states' header information aligned on index
-    data : pandas.DataFrame
-        holds the row-wise data aligned on index
-    meta : pandas.DataFrame
-        holds the states' meta information aligned on index
+        class this object is keyed to
+    data : pandsa.DataFrame
+        a pandas data frame holding the relkevant data
+    header_fnames : list of str
+        holds the field names for the header
+    data_fanmes : list of str
+        holds the field names for the data
+    meta_fanmes : list of str
+        _holds the names of the meta info
     """
 
-    def __init__(self, cls, header, data, meta):
+    def __init__(self, cls, data_df, uid_fname, targetid_fname, timestamp_fname, meta_fnames, data_fnames):
         self.cls = cls
-        self.header = header
-        self.data = data
-        self.meta = meta
+        self.data_df = data_df,
+        self.uid_fname = uid_fname
+        self.targetid_fname = targetid_fname
+        self.timestamp_fname = timestamp_fname
+        self.data_fnames = data_fnames
+        self.meta_fnames = meta_fnames
 
     def startTime(self):
-        return self.header['timestamp'].min()
+        return self.data_df[self.timestamp_fname].min()
 
     def endTime(self):
-        return self.header['timestamp'].max()
+        return self.data_df[self.timestamp_fname].max()
 
     def copy(self):
-        return StatePack(
-            self.header.copy(),
-            self.data.copy(),
-            self.meta.copy())
+        return DataPack(
+            self.cls,
+            self.data_df.copy(),
+            self.uid_fname, self.targetid_fname, self.timestamp_fname,
+            self.meta_fnames.copy(),
+            self.data_fnames.copy())
 
     def __len__(self):
-        return len(self.header)
+        return len(self.data_df)
+
+    @property
+    def uid(self):
+        return self.data_df[self.uid_fname]
+    @property
+    def targetid(self):
+        return self.data_df[self.targetid_fname]
+    @property
+    def timestamp(self):
+        return self.data_df[self.timestamp_fname]
+    @property
+    def meta(self):
+        return self.data[self.meta_fnames]
+
+    @property
+    def data(self):
+        return self.data[self.data_fnames]
 
     def append(self, other):
         """ append another object of the same class as this, where the data is the union of both """
         assert(isinstance(other, self.__class__))
-        self.header = self.header.append(other.header, ignore_index=True)
-        self.header = self.header.reindex()
-        self.meta = self.meta.append(other.meta, ignore_index=True)
-        self.meta.index = self.header.index
-        self.data = self.data.append(other.data, ignore_index=True)
-        self.data.index = self.header.index
+        assert(other.cls == self.cls)
 
     def items(self):
         """ get the item representation of the data in this object """
         objs = []
         for i in range(len(self)):
             obj = self.cls(
-                **self.header.iloc[i].as_dict(),
+                uid=self.uid_fanme, targetid=self.targetid_fname, timestamp=self.timesstamp_fname,
                 data=self.data.iloc[i].as_dict(),
                 meta=self.meta.iloc[i].as_dict())
             objs.append(obj)

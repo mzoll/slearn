@@ -116,10 +116,7 @@ def process(incidentpack,
 
     header = incidentpack.header.copy()
     data = incidentpack.data.copy()
-    meta = incidentpack.meta.copy()
-    header.sort_values(['tid','uid'], inplace=True)
-    data.reindex(header.index, inplace=True)
-    meta.reindex(header.index, inplace=True)
+    data.sort_values([incidentpack.targetid_fname,incidentpack.uid_fname], inplace=True)
 
     ncores = GetNCores(nthreads)
 
@@ -129,9 +126,9 @@ def process(incidentpack,
         outdata = _ConstructStateCaller(sessionTrigger, stateBuilder_list)(np.ones(len(data)), data)
     elif ncores > 1:
         nbatches = max(math.ceil(len(data)/maxbatchsize), ncores)
-        g = GenStrategicGroups( header['tid'].values, nbatches )
+        g = GenStrategicGroups( header[incidentpack.targetid_fname].values, nbatches )
         
-        dfGrouped = data.groupby(g)
+        dfGrouped = data[incidentpack.data_fnames].groupby(g)
         func = _ConstructStateCaller(sessionTrigger, stateBuilder_list)
         outdata = pd.concat( Parallel(n_jobs=ncores)(delayed(func)(group) for _, group in dfGrouped) )
     else:
@@ -140,11 +137,14 @@ def process(incidentpack,
     exectime = time.perf_counter()-startCallTime
     logger.info("ConstructState took %d seconds for %d rows ( %f ms / row / CPU)" % (exectime, data.shape[0], exectime / data.shape[0] * ncores * 1E3))
 
-    header.reindex(inplace=True)
-    outdata.reindex(inplace=True)
-    meta.reindex(inplace=True)
-    header.sort_values('tid', inplace=True)
-    outdata.reindex(header.index, inplace=True)
-    meta.reindex(header.index, inplace=True)
 
-    return StatePack(header, outdata, meta)
+    states_data_df = pd.concat([
+        data[incidentpack.uid_fname, incidentpack.targetid_fname, incidentpack.timestamp_fname],
+        data[incidentpack.meta_fnames], outdata])
+
+    return StatePack(states_data_df,
+                     incidentpack.uid_fname,
+                     incidentpack.targetid_fname,
+                     incidentpack.timestamp_fname,
+                     incidentpack.meta_fnames,
+                     outdata.columns.values)
