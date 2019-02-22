@@ -111,6 +111,12 @@ class State(object):
             for k,v in d.items():
                 self.__setitem__(k, v)
 
+        def items(self):
+            return self.to_flatdict
+
+        def keys(self):
+            return ['__'.join([n, k]) for n, p in self._props.items() for n, v in p.items()]
+
         def copy(self):
             """ make a deep copy """
             return copy.deepcopy(self)
@@ -133,6 +139,10 @@ class State(object):
         self.timestamp = timestamp
         self.meta = meta
         self.data = self._Data.from_dict(data)
+
+    def __str__(self):
+        return f"State(uid:{self.uid}, tid:{self.targetid}, ts:{self.timestamp})::" + \
+               "data:{{{}}}".format(list(self.data.keys()))
 
     def copy(self):
         """ make a deep copy of this object """

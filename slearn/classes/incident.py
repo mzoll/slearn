@@ -29,3 +29,7 @@ class Incident(object):
         self.timestamp = timestamp
         self.meta = meta
         self.data = data
+
+    def __str__(self):
+        return f"Incident(uid:{self.uid}, tid:{self.targetid}, ts:{self.timestamp})::" + \
+               "data:{{{}}}".format(list(self.data.keys()))
