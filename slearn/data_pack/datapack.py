@@ -60,15 +60,27 @@ class DataPack(object):
     @property
     def meta(self):
         return self.data_df[self.meta_fnames]
-
     @property
     def data(self):
         return self.data_df[self.data_fnames]
+
+    def get_idata(self):
+        df = self.data_df[self.data_fnames].copy()
+        df.set_index(self.data_df[self.uid_fname])
+        return df
 
     def append(self, other):
         """ append another object of the same class as this, where the data is the union of both """
         assert(isinstance(other, self.__class__))
         assert(other.cls == self.cls)
+        assert(other.uid_fname == self.uid_fname)
+        assert(other.targetid_fname == self.targetid_fname)
+        assert(other.timestamp_fname == self.timestamp_fname)
+        #assert(other.meta_fnames == self.meta_fnames)
+        #assert(other.data_fnames == self.data_fnames)
+        #assert(other.data_df.columns == self.data_df.columns) # these should compare list for the id of their elements
+
+        self.data_df = self.data_df.append(other.data_df)
 
     def items(self):
         """ get the item representation of the data in this object """

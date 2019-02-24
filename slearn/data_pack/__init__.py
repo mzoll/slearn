@@ -1,4 +1,4 @@
-from .pack import DataPack
+from .datapack import DataPack
 from slearn.classes import Incident, State
 
 class IncidentPack(DataPack):
