@@ -112,7 +112,7 @@ class State(object):
                 self.__setitem__(k, v)
 
         def items(self):
-            return self.to_flatdict
+            return self.to_flatdict().items()
 
         def keys(self):
             return ['__'.join([n, k]) for n, p in self._props.items() for n, v in p.items()]
