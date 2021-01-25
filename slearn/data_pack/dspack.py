@@ -4,10 +4,15 @@ Created on Dez 03, 2017
 @author: marcel.zoll
 """
 
-import deprecation
+import warnings
+import typing
+import datetime as dt
+
+#::: typing
+from typing import Dict, Any
+NamedDict = Dict['str', Any]
 
 
-@deprecation.deprecated(details="This class will be removed")
 class DataStreamPack(object):
     """ collection holding data received from a DW database server (formerly process-data)
     
@@ -22,12 +27,14 @@ class DataStreamPack(object):
     meta : dict
         hold meta information to this data
     """
-
-    def __init__(self, data, startTime, endTime, meta={}):
+    def __init__(self, data, startTime: dt.datetime, endTime: dt.datetime, meta: Union[NamedDict, None] = None):
         self.data = data
         self.startTime = startTime
         self.endTime = endTime
-        self.meta = meta
+        self.meta = meta if meta is not None else dict()
+
+        warnings.warn("is depricated and will be removed", category=DeprecationWarning,
+                      stacklevel=2)
 
     def copy(self):
         return DataStreamPack(self.data.copy(), self.startTime, self.endTime, self.meta.copy())
