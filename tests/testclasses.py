@@ -4,11 +4,9 @@ Created on Jan 25, 2018
 @author: marcel.zoll
 '''
 import unittest
+import uuid
 
-from slearn.classes import State
-from slearn.classes import Incident
-from slearn.classes import Prime
-from slearn.classes import Result
+from slearn.classes import State, Incident
 
 import datetime as dt
 
@@ -17,29 +15,18 @@ _now = dt.datetime.now()
 class Test(unittest.TestCase):
     
     def testIncident(self):
-        i = Incident(123, 'AAAA', _now, 'rkey',
-                    meta = {'CustomerId': 99, 'WeblogId': 1234, 'UserKey': "AAAA", 'SessionKey': "BBBB", 'LogTime': _now})
-        i.data = {'Key0': 0, 'LogTime': _now, 'TimeVec': [_now, _now]}
+        i = Incident(
+            uid=uuid.uuid4(), targetid=uuid.uuid4(), timestamp=_now,
+            meta={'CustomerId': 99, 'WeblogId': 1234, 'UserKey': "AAAA", 'SessionKey': "BBBB", 'LogTime': _now},
+            data={'Key0': 0, 'LogTime': _now, 'TimeVec': [_now, _now]})
 
     def testState(self):
-        _now = dt.datetime.now()
         s = State(123, 'AAAA', _now, 'rkey',
                     meta = {'UUID': 1234, 'UserKey': "AAAA", 'SessionKey': "BBBB", 'LogTime': _now})
         s.data.now = {'Key0': 0, 'LogTime': _now, 'TimeVec': [_now, _now]}
 
         sJSON = s.toJSON()
         _ = s.fromJSON(sJSON)
-        
-    def testPrime(self):
-        p = Prime(123, 'AAAA', _now, 'rkey',
-                    meta = {'CustomerId': 99, 'WeblogId': 1234, 'UserKey': "AAAA", 'SessionKey': "BBBB", 'LogTime': _now})
-        p.data = {'Key0': 0, 'LogTime': _now, 'TimeVec': [_now, _now]}
-    
-    def testResult(self):
-        r = Result(123, 'AAAA', _now, 'rkey',
-                    meta = {'CustomerId': 99, 'WeblogId': 1234, 'UserKey': "AAAA", 'SessionKey': "BBBB", 'LogTime': _now})
-        r.data = {'Key0': 0, 'LogTime': _now, 'TimeVec': [_now, _now]}
-
     
     
 if __name__ == "__main__":
