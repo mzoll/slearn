@@ -9,7 +9,7 @@ import typing
 import datetime as dt
 
 #::: typing
-from typing import Dict, Any
+from typing import Dict, Any, Union
 NamedDict = Dict['str', Any]
 
 
